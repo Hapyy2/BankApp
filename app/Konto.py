@@ -13,5 +13,10 @@ class Konto:
             self.pesel = "Niepoprawny pesel!"
 
     def test_kodu(self, kod):
-        if kod[0:5] == "PROM_" and len(kod) == 8:
+        if kod[0:5] == "PROM_" and len(kod) == 8 and self.test_senior() == False:
             self.saldo = 50
+
+    def test_senior(self):
+        rok = int(self.pesel[:2])
+        miesiac = int(self.pesel[2:4])
+        return (rok > 60 and miesiac <= 12) or (miesiac >= 21 and miesiac <= 32)

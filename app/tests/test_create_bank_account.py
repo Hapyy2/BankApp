@@ -6,6 +6,7 @@ class TestCreateBankAccount(unittest.TestCase):
     imie = "Dariusz"
     nazwisko = "Januszewski"
     pesel = "12345678900"
+    promo = "PROM_XYZ"
 
     def test_tworzenie_konta(self):
         pierwsze_konto = Konto(self.imie, self.nazwisko, self.pesel)
@@ -35,6 +36,11 @@ class TestCreateBankAccount(unittest.TestCase):
         konto = Konto(self.imie, self.nazwisko, self.pesel, promo = kod)
         self.assertEqual(konto.saldo, 50, "Kod jest poprawny ale nie przypisano srodkow")
     
-    def brak_kodu(self):
+    def test_brak_kodu(self):
         konto = Konto(self.imie, self.nazwisko, self.pesel)
         self.assertEqual(konto.saldo, 0, "Przypisano środki bez kodu!")
+    
+    def test_promo_senior(self):
+        senior_pesel = "65010112345"
+        konto = Konto(self.imie, self.nazwisko, senior_pesel, self.promo)
+        self.assertEqual(konto.saldo, 0, "Przypisano środki z kodu seniorowi!")
