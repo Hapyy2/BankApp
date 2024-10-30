@@ -44,3 +44,28 @@ class TestCreateBankAccount(unittest.TestCase):
         senior_pesel = "65010112345"
         konto = Konto(self.imie, self.nazwisko, senior_pesel, self.promo)
         self.assertEqual(konto.saldo, 0, "Przypisano środki z kodu seniorowi!")
+
+class TestTransfer(unittest.TestCase):
+    konto_1 = Konto("Jan", "Kowalski", "20210112345")
+    konto_2 = Konto("Anna", "Nowak", "12345678901")
+    kwota_przelewu = 50
+
+    def test_przelew_wysylajacy(self):
+        self.konto_1.saldo = 200
+        self.konto_2.saldo = 0
+        self.konto_1.przelew(self.konto_2, self.kwota_przelewu)
+        self.assertEqual(self.konto_1.saldo, 150, "Nie odjeło środków")
+    
+    def test_przelew_adresat(self):
+        self.konto_1.saldo = 200
+        self.konto_2.saldo = 0
+        self.konto_1.przelew(self.konto_2, self.kwota_przelewu)
+        self.assertEqual(self.konto_2.saldo, 50, "Nie przekazano środków")
+        
+    def test_saldo_na_minus(self):
+        self.konto_1.saldo = 200
+        self.konto_2.saldo = 0
+        self.konto_2.przelew(self.konto_1, self.kwota_przelewu)
+        self.assertEqual(self.konto_2.saldo, 0, "Nie można przelać niedostępnych środków")
+    
+    

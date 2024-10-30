@@ -20,3 +20,8 @@ class Konto:
         rok = int(self.pesel[:2])
         miesiac = int(self.pesel[2:4])
         return (rok > 60 and miesiac <= 12) or (miesiac >= 21 and miesiac <= 32)
+    
+    def przelew(self, adresat, kwota):
+        if(self.saldo > kwota):
+            self.saldo -= kwota
+            adresat.saldo += kwota
