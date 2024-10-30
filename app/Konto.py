@@ -1,9 +1,18 @@
 class Konto:
+    def __init__(self):
+        self.saldo = 0
+
+    def przelew(self, adresat, kwota):
+        if(self.saldo > kwota):
+            self.saldo -= kwota
+            adresat.saldo += kwota
+
+class Konto_osobiste(Konto):
     def __init__(self, imie, nazwisko, pesel, promo = ""):
+        super().__init__()
         self.imie = imie
         self.nazwisko = nazwisko
         self.pesel = pesel
-        self.saldo = 0
         self.promo = promo
         self.test_pesel()
         self.test_kodu(promo)
@@ -20,8 +29,14 @@ class Konto:
         rok = int(self.pesel[:2])
         miesiac = int(self.pesel[2:4])
         return (rok > 60 and miesiac <= 12) or (miesiac >= 21 and miesiac <= 32)
-    
-    def przelew(self, adresat, kwota):
-        if(self.saldo > kwota):
-            self.saldo -= kwota
-            adresat.saldo += kwota
+
+class Konto_firmowe(Konto):
+    def __init__(self, nazwa, NIP):
+        super().__init__()
+        self.nazwa = nazwa
+        self.NIP = NIP
+        self.test_NIP()
+
+    def test_NIP(self):
+        if len(self.NIP) != 10:
+            self.NIP = "Niepoprawny NIP!"
