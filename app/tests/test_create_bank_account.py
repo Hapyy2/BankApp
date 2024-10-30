@@ -48,6 +48,7 @@ class TestCreateBankAccount(unittest.TestCase):
 class TestTransfer(unittest.TestCase):
     konto_1 = Konto_osobiste("Jan", "Kowalski", "20210112345")
     konto_2 = Konto_osobiste("Anna", "Nowak", "12345678901")
+    konto_firm = Konto_firmowe("Adamex", "1234567890")
     kwota_przelewu = 50
 
     def test_przelew_wysylajacy(self):
@@ -67,6 +68,24 @@ class TestTransfer(unittest.TestCase):
         self.konto_2.saldo = 0
         self.konto_2.przelew(self.konto_1, self.kwota_przelewu)
         self.assertEqual(self.konto_2.saldo, 0, "Nie można przelać niedostępnych środków")
+    
+    def test_ekspres_osobiste(self):
+        self.konto_1.saldo = 200
+        self.konto_2.saldo = 0
+        self.konto_1.ekspres(self.konto_2, self.kwota_przelewu)
+        self.assertEqual(self.konto_1.saldo, 149, "Nie odjeło środków")
+    
+    def test_ekspres_firmowe(self):
+        self.konto_firm.saldo = 200
+        self.konto_2.saldo = 0
+        self.konto_firm.ekspres(self.konto_2, self.kwota_przelewu)
+        self.assertEqual(self.konto_firm.saldo, 145, "Nie odjeło środków")
+        
+    def test_ekspres_saldo_na_minus(self):
+        self.konto_1.saldo = 50
+        self.konto_2.saldo = 0
+        self.konto_1.ekspres(self.konto_2, self.kwota_przelewu)
+        self.assertEqual(self.konto_1.saldo, -1, "Nie można przelać niedostępnych środków")
     
 class TestFirmAccount(unittest.TestCase):
     nazwa = "Adamex"
