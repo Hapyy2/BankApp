@@ -19,3 +19,22 @@ class TestCreateBankAccount(unittest.TestCase):
         zly_pesel = "1234"
         konto = Konto(self.imie, self.nazwisko, zly_pesel)
         self.assertEqual(konto.pesel, "Niepoprawny pesel!", "Pesel nie został zapisany - za krótki")
+    
+    def test_dlugi_pesel(self):
+        zly_pesel = "12345678901234"
+        konto = Konto(self.imie, self.nazwisko, zly_pesel)
+        self.assertEqual(konto.pesel, "Niepoprawny pesel!", "Pesel nie został zapisany - za długi")
+
+    def test_zly_kod(self):
+        kod = "PROM_12345"
+        konto = Konto(self.imie, self.nazwisko, self.pesel, promo = kod)
+        self.assertEqual(konto.saldo, 0, "Kod jest niepoprawny")
+    
+    def test_poprawny_kod(self):
+        kod = "PROM_XYZ"
+        konto = Konto(self.imie, self.nazwisko, self.pesel, promo = kod)
+        self.assertEqual(konto.saldo, 50, "Kod jest poprawny ale nie przypisano srodkow")
+    
+    def brak_kodu(self):
+        konto = Konto(self.imie, self.nazwisko, self.pesel)
+        self.assertEqual(konto.saldo, 0, "Przypisano środki bez kodu!")
