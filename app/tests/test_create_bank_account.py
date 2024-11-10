@@ -13,6 +13,7 @@ class TestCreateBankAccount(unittest.TestCase):
         self.assertEqual(pierwsze_konto.imie, self.imie, "Imie nie zostało zapisane!")
         self.assertEqual(pierwsze_konto.nazwisko, self.nazwisko, "Nazwisko nie zostało zapisane!")
         self.assertEqual(pierwsze_konto.saldo, 0, "Saldo nie jest zerowe!")
+        self.assertEqual(pierwsze_konto.historia, [], "Historia nie jest pusta!")
 
     #tutaj proszę dodawać nowe testy
 
@@ -86,6 +87,33 @@ class TestTransfer(unittest.TestCase):
         self.konto_2.saldo = 0
         self.konto_1.ekspres(self.konto_2, self.kwota_przelewu)
         self.assertEqual(self.konto_1.saldo, -1, "Nie można przelać niedostępnych środków")
+    
+    def test_przelew_zaksiegowanie(self):
+        self.konto_1.saldo = 200
+        self.konto_2.saldo = 0
+        self.konto_1.historia = []
+        self.konto_2.historia = []
+        self.konto_1.przelew(self.konto_2, self.kwota_przelewu)
+        self.assertEqual(self.konto_1.historia, [-50], "Nie zaksiegowano poprawnie przelewu")
+        self.assertEqual(self.konto_2.historia, [50], "Nie zaksiegowano poprawnie przelewu")
+
+    def test_ekspres_osobiste_zaksiegowanie(self):
+        self.konto_1.saldo = 200
+        self.konto_2.saldo = 0
+        self.konto_1.historia = []
+        self.konto_2.historia = []
+        self.konto_1.ekspres(self.konto_2, self.kwota_przelewu)
+        self.assertEqual(self.konto_1.historia, [-50, -1], "Nie zaksiegowano poprawnie przelewu")
+        self.assertEqual(self.konto_2.historia, [50], "Nie zaksiegowano poprawnie przelewu")
+    
+    def test_ekspres_firmowe_zaksiegowanie(self):
+        self.konto_firm.saldo = 200
+        self.konto_2.saldo = 0
+        self.konto_firm.historia = []
+        self.konto_2.historia = []
+        self.konto_firm.ekspres(self.konto_2, self.kwota_przelewu)
+        self.assertEqual(self.konto_firm.historia, [-50, -5], "Nie zaksiegowano poprawnie przelewu")
+        self.assertEqual(self.konto_2.historia, [50], "Nie zaksiegowano poprawnie przelewu")
     
 class TestFirmAccount(unittest.TestCase):
     nazwa = "Adamex"
