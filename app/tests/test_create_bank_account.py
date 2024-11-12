@@ -134,3 +134,26 @@ class TestFirmAccount(unittest.TestCase):
         zly_NIP = "12345678901234"
         konto = Konto_firmowe(self.nazwa, zly_NIP)
         self.assertEqual(konto.NIP, "Niepoprawny NIP!", "NIP nie został zapisany - za długi")
+
+class TestCredit(unittest.TestCase):
+    konto = Konto_osobiste("Jan", "Kowalski", "20210112345")
+    kwota = 500
+
+    def test_udzielenie_kredytu_warunek1(self):
+        self.konto.historia = [-5, 50, 50, 50]
+        self.konto.saldo = 0
+        self.konto.zaciagnij_kredyt(self.kwota)
+        self.assertEqual(self.konto.saldo, 500, "Nie udzielono kredytu! - warunek 1 spełniony")
+    
+    def test_udzielenie_kredytu_warunek2(self):
+        self.konto.historia = [-10000, 250, 250, 50, 50, -50]
+        self.konto.saldo = 0
+        self.konto.zaciagnij_kredyt(self.kwota)
+        self.assertEqual(self.konto.saldo, 500, "Nie udzielono kredytu! - warunek 2 spełniony")
+    
+    def test_nie_udzielenie_kredytu(self):
+        self.konto.historia = [-5, 50, -50, 50, 50]
+        self.konto.saldo = 0
+        self.konto.zaciagnij_kredyt(self.kwota)
+        self.assertEqual(self.konto.saldo, 0, "Udzielono kredytu! - oba warunki nie spełnione")
+
