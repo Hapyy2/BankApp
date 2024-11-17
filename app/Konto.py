@@ -58,10 +58,7 @@ class Konto_osobiste(Konto):
         return True
 
     def war_kredyt_2(self, kwota):
-        if len(self.historia) >= 5 and sum(self.historia[-5:]) > kwota:
-            return True
-        else:
-            return False
+        return len(self.historia) >= 5 and sum(self.historia[-5:]) > kwota
 
 class Konto_firmowe(Konto):
     def __init__(self, nazwa, NIP):
@@ -74,3 +71,14 @@ class Konto_firmowe(Konto):
     def test_NIP(self):
         if len(self.NIP) != 10:
             self.NIP = "Niepoprawny NIP!"
+    
+    def zaciagnij_kredyt(self, kwota):
+        if self.war_kredyt_1(kwota) and self.war_kredyt_2():
+            self.saldo += kwota
+            self.historia.append(kwota)
+    
+    def war_kredyt_1(self, kwota):
+        return self.saldo >= kwota*2
+
+    def war_kredyt_2(self):
+        return 1775 in self.historia
