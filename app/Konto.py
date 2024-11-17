@@ -43,6 +43,25 @@ class Konto_osobiste(Konto):
         rok = int(self.pesel[:2])
         miesiac = int(self.pesel[2:4])
         return (rok > 60 and miesiac <= 12) or (miesiac >= 21 and miesiac <= 32)
+    
+    def zaciagnij_kredyt(self, kwota):
+        if self.war_kredyt_1() or self.war_kredyt_2(kwota):
+            self.saldo += kwota
+            self.historia.append(kwota)
+    
+    def war_kredyt_1(self):
+        i = -3
+        while i < 0:
+            if self.historia[i] < 0:
+                return False
+            i += 1
+        return True
+
+    def war_kredyt_2(self, kwota):
+        if len(self.historia) >= 5 and sum(self.historia[-5:]) > kwota:
+            return True
+        else:
+            return False
 
 class Konto_firmowe(Konto):
     def __init__(self, nazwa, NIP):
