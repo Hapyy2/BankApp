@@ -42,3 +42,4 @@ class TestCreateBankAccount(unittest.TestCase):
         pesel = self.senior_pesel if pesel_type == "senior" else self.pesel
         konto = Konto_osobiste(self.imie, self.nazwisko, pesel, promo = test_promo)
         self.assertEqual(konto.saldo, result, f"Error: {error}")
+
