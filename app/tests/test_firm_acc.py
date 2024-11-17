@@ -1,6 +1,6 @@
 import unittest
 
-from ..Konto import *
+from app.Konto_firmowe import *
 from parameterized import *
 
 class TestFirmAccount(unittest.TestCase):

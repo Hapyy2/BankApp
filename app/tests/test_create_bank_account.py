@@ -1,6 +1,6 @@
 import unittest
 
-from ..Konto import *
+from app.Konto_osobiste import *
 from parameterized import *
 
 class TestCreateBankAccount(unittest.TestCase):

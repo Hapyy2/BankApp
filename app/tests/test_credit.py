@@ -1,6 +1,7 @@
 import unittest
 
-from ..Konto import *
+from app.Konto_osobiste import *
+from app.Konto_firmowe import *
 from parameterized import *
 
 class TestCredit(unittest.TestCase):
