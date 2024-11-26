@@ -22,6 +22,10 @@ class TestCRUD(unittest.TestCase):
         req.delete(f"{self.base_url}/{self.body['pesel']}")
         response = req.post(self.base_url, json=self.body)
         self.assertEqual(response.status_code, 201, "Wrong status code - account not created")
+    
+    def test_create_acc_taken(self):
+        response = req.post(self.base_url, json=self.body)
+        self.assertEqual(response.status_code, 409, "Wrong status code - account created")
 
     def test_findAcc(self):
         response = req.get(f"{self.base_url}/{self.body['pesel']}")

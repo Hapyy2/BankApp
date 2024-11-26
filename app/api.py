@@ -9,18 +9,20 @@ app = Flask(__name__)
 def create_account():
     data = request.get_json()
     print(f"Create account request: {data}")
-    konto = Konto_osobiste(data["imie"], data["nazwisko"], data["pesel"])
-    Accounts_Registry.AddAccount(konto)
-    return jsonify({"message": "Account created"}), 201
+    if Accounts_Registry.SearchAccount(data["pesel"]) == False:
+        konto = Konto_osobiste(data["imie"], data["nazwisko"], data["pesel"])
+        Accounts_Registry.AddAccount(konto)
+        return jsonify({"message": "Account created"}), 201
+    return jsonify({"message": "Cannot create an account beacuse given pesel is already used"}), 409
 
 #curl -X GET localhost:5000/api/accounts/03409878610
 @app.route("/api/accounts/<pesel>", methods=['GET'])
 def get_account_by_pesel(pesel):
     print(f"Search account request: {pesel}")
     person = Accounts_Registry.SearchAccount(pesel)
-    if person == "Nie znaleziono konta z podanym peselem":
-        return jsonify({"message": "Could not find the account"}), 404
-    return jsonify({"imie": person.imie, "nazwisko": person.nazwisko, "pesel": person.pesel, "saldo": person.saldo}), 200
+    if person:
+        return jsonify({"imie": person.imie, "nazwisko": person.nazwisko, "pesel": person.pesel, "saldo": person.saldo}), 200
+    return jsonify({"message": "Could not find the account"}), 404
 
 @app.route("/api/accounts/count", methods=['GET'])
 def get_account_count():
