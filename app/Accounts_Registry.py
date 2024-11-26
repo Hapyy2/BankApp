@@ -12,7 +12,7 @@ class Accounts_Registry():
         for person in cls.registry:
             if person.pesel == test_pesel:
                 return person
-        return "Nie znaleziono konta z podanym peselem"
+        return False
 
     @classmethod
     def CountAccount(cls):

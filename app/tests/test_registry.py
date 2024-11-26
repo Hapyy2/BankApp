@@ -17,12 +17,12 @@ class TestRegistry(unittest.TestCase):
         self.assertEqual(Accounts_Registry.registry[-1], self.konto_os, "Nie dodano konta do rejestru")
 
     def test_search_acc_found(self):
-        searched = Accounts_Registry.SearchAccount("11122233344")
-        self.assertEqual(searched, "Nie znaleziono konta z podanym peselem", f"Error: Błąd")
-    
-    def test_search_acc_not_found(self):
         searched = Accounts_Registry.SearchAccount("12345678901")
         self.assertEqual(searched, self.konto_os, f"Error: Nie znaleziono konta z podanym peselem a powinno")
+
+    def test_search_acc_not_found(self):
+        searched = Accounts_Registry.SearchAccount("11122233344")
+        self.assertEqual(searched, False, f"Error: Błąd")
 
     def test_count_acc(self):
         count = Accounts_Registry.CountAccount()
