@@ -8,6 +8,7 @@ class Konto_osobiste(Konto):
         self.pesel = pesel
         self.promo = promo
         self.oplata_ekspres = 1
+        self.history_message = "Twoja historia konta to"
         self.test_pesel()
         self.test_kodu(promo)
 

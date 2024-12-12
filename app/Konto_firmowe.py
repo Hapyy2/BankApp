@@ -9,6 +9,7 @@ class Konto_firmowe(Konto):
         self.nazwa = nazwa
         self.NIP = NIP
         self.oplata_ekspres = 5
+        self.history_message = "Historia konta Twojej firmy to"
         self.test_NIP()
         if self.NIP != "Niepoprawny NIP!":
             if self.checkNIP() == False:

@@ -1,8 +1,6 @@
 import unittest
-
 from app.Konto_firmowe import *
-from parameterized import *
-
+from parameterized import parameterized
 from unittest.mock import patch, MagicMock
 
 
@@ -20,59 +18,54 @@ class TestFirmAccount(unittest.TestCase):
     @parameterized.expand([
         ("test_krotki_NIP", "NIP nie został zapisany - za krótki", "1234", "Niepoprawny NIP!"),
         ("test_dlugi_NIP", "NIP nie został zapisany - za długi", "12345678901234", "Niepoprawny NIP!")
-
     ])
     def test_NIP(self, name, error, test_NIP, result):
         print(f"Test: {name}")
         konto_firm = Konto_firmowe(self.nazwa, test_NIP)
         self.assertEqual(konto_firm.NIP, result, f"Error: {error}")
 
-    @patch('app.Konto_firmowe.req.get')
-    def test_checkNIP_valid(self, mock_get):
-        # Mockowanie odpowiedzi requestu
-        mock_response = MagicMock()
-        mock_response.status_code = 200
-        mock_get.return_value = mock_response
-        
-        konto = Konto_firmowe(nazwa="Test Firma", NIP="1234567890")
-        self.assertTrue(konto.checkNIP())
+    @patch('app.Konto_firmowe.Konto_firmowe.checkNIP', return_value=True)
+    def test_checkNIP_valid(self, mock_checkNIP):
+        konto = Konto_firmowe(nazwa=self.nazwa, NIP=self.NIP)
+        self.assertEqual(konto.nazwa, self.nazwa, "Nie zapisano nazwy!")
+        self.assertEqual(konto.NIP, self.NIP, "Nie zapisano NIPu!")
+        self.assertEqual(konto.saldo, 0, "Niepoprawny stan konta!")
+        mock_checkNIP.assert_called_once()
 
-    @patch('app.Konto_firmowe.req.get')
-    def test_checkNIP_invalid(self, mock_get):
-        # Mockowanie odpowiedzi requestu
-        mock_response = MagicMock()
-        mock_response.status_code = 404
-        mock_get.return_value = mock_response
-
+    @patch('app.Konto_firmowe.Konto_firmowe.checkNIP', return_value=False)
+    def test_checkNIP_invalid_raises_error(self, mock_checkNIP):
         with self.assertRaises(ValueError) as context:
-            Konto_firmowe(nazwa="Test Firma", NIP="1234567890")
-        
-        # Opcjonalne: możesz sprawdzić wiadomość wyjątku
+            Konto_firmowe(nazwa=self.nazwa, NIP=self.NIP)
         self.assertEqual(str(context.exception), "Company not registered!!")
+        mock_checkNIP.assert_called_once()
 
+    @parameterized.expand([
+        ("NIP za krótki", "1234", "Niepoprawny NIP!"),
+        ("NIP za długi", "12345678901234", "Niepoprawny NIP!"),
+    ])
+    def test_NIP_validation(self, name, test_NIP, expected):
+        konto = Konto_firmowe(nazwa=self.nazwa, NIP=test_NIP)
+        self.assertEqual(konto.NIP, expected, f"{name}: Walidacja NIP nie działa poprawnie!")
 
-    def test_invalid_NIP_length(self):
-        # NIP krótszy niż 10 znaków
-        konto = Konto_firmowe(nazwa="Test Firma", NIP="12345")
-        self.assertEqual(konto.NIP, "Niepoprawny NIP!")
-
-    @patch('app.Konto_firmowe.req.get')
-    def test_constructor_raises_error_for_unregistered_company(self, mock_get):
-        # Mockowanie requestu jako nieistniejąca firma
-        mock_response = MagicMock()
-        mock_response.status_code = 404
-        mock_get.return_value = mock_response
-        
+    @patch('app.Konto_firmowe.Konto_firmowe.checkNIP', return_value=False)
+    def test_constructor_unregistered_company(self, mock_checkNIP):
         with self.assertRaises(ValueError) as context:
-            Konto_firmowe(nazwa="Test Firma", NIP="1234567890")
+            Konto_firmowe(nazwa=self.nazwa, NIP=self.NIP)
         self.assertEqual(str(context.exception), "Company not registered!!")
+        mock_checkNIP.assert_called_once()
 
-    @patch('app.Konto_firmowe.req.get')
-    def test_constructor_does_not_raise_error_for_valid_company(self, mock_get):
-        # Mockowanie requestu jako poprawna firma
-        mock_response = MagicMock()
-        mock_response.status_code = 200
-        mock_get.return_value = mock_response
-        
-        konto = Konto_firmowe(nazwa="Test Firma", NIP="1234567890")
+    @patch('app.Konto_firmowe.Konto_firmowe.checkNIP', return_value=True)
+    def test_constructor_valid_company(self, mock_checkNIP):
+        konto = Konto_firmowe(nazwa=self.nazwa, NIP=self.NIP)
         self.assertIsInstance(konto, Konto_firmowe)
+        mock_checkNIP.assert_called_once()
+
+    @patch('app.Konto_firmowe.req.get')
+    def test_checkNIP_fails(self, mock_get):
+        mock_response = MagicMock()
+        mock_response.status_code = 404
+        mock_get.return_value = mock_response
+        konto = Konto_firmowe.__new__(Konto_firmowe)
+        konto.nazwa = "Test Firma"
+        konto.NIP = "1234567890"
+        self.assertFalse(konto.checkNIP(), "checkNIP should return False for non-200 responses.")
