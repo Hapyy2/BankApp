@@ -67,3 +67,4 @@ class TestSendHistoryToEmail(unittest.TestCase):
             self.text_firm,
             self.email,
         )
+
