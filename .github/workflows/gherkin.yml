@@ -37,4 +37,4 @@ jobs:
     - name: Run Flask
       run: python3 -m flask --app ./app/api.py run &
     - name: Run behave tests
-      run: python3 -m behave ./features/
+      run: python3 -m behave app/features/
